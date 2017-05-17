@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         super.onCreate(savedInstanceState);
         state = savedInstanceState;
         setContentView(R.layout.activity_main);
+        //set GoogleApiClient
         if (mGoogleApiClient == null) {
             mGoogleApiClient = new GoogleApiClient.Builder(this)
                     .addConnectionCallbacks(this)
@@ -79,7 +80,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     public void changeCity(String city) {
         WeatherFragment wf = (WeatherFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.container);
-        wf.changeCity(city);
+//        wf.changeCity(city);
         new CityPreference(this).setCity(city);
     }
 
@@ -100,16 +101,22 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     double mLat, mLong;
 
+    //khi google api client connected
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
+        //lay vi tri cuoi cung cua device
         Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
                 mGoogleApiClient);
+        //tao class weather fragmment
+        WeatherFragment web = new WeatherFragment();
         if (mLastLocation != null) {
             mLat = mLastLocation.getLatitude();
             mLong = mLastLocation.getLongitude();
+            web.setLat(mLat);
+            web.setLog(mLong);
         }
         Geocoder gcd = new Geocoder(getApplicationContext(), Locale.getDefault());
         List<Address> addresses = null;
@@ -118,12 +125,12 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         } catch (IOException e) {
             e.printStackTrace();
         }
-        WeatherFragment web = new WeatherFragment();
-        if (addresses.size() > 0) {
+        if (addresses != null && addresses.size() > 0) {
             String city = addresses.get(0).getSubAdminArea();
             web.changeCity(city);
             new CityPreference(this).setCity(city);
         }
+        web.startCor(mLat, mLong);
         if (state == null) {
             getSupportFragmentManager().beginTransaction().add(R.id.container, web).commit();
         }

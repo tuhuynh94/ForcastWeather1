@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 
 public class CityPreference {
     SharedPreferences prefs;
+    double lat, log;
 
     public CityPreference(Activity activity){
         prefs = activity.getPreferences(Activity.MODE_PRIVATE);
@@ -19,4 +20,5 @@ public class CityPreference {
     void setCity(String city){
         prefs.edit().putString("city", city).commit();
     }
+
 }

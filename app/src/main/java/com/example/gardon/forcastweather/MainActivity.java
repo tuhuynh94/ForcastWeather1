@@ -107,6 +107,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
+        boolean check = mGoogleApiClient.isConnected();
         //lay vi tri cuoi cung cua device
         Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
                 mGoogleApiClient);
@@ -115,6 +116,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         if (mLastLocation != null) {
             mLat = mLastLocation.getLatitude();
             mLong = mLastLocation.getLongitude();
+            web.setLat(mLat);
+            web.setLog(mLong);
+        }
+        GPSTracker gps = new GPSTracker(this);
+        gps.getLocation();
+        if(gps.canGetLocation()){
+            mLat = gps.getLatitude();
+            mLong = gps.getLongitude();
             web.setLat(mLat);
             web.setLog(mLong);
         }
